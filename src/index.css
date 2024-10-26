@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "font-joti";
+  src: url("/fonts/Joti_One/JotiOne-Regular.ttf");
+}
+
+@font-face {
+  font-family: "font-inter";
+  src: url("/fonts/Inter/static/Inter_18pt-Regular.ttf");
+}
