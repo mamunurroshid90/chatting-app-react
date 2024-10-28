@@ -8,10 +8,12 @@ import {
 } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 const RegFormCompo = () => {
   const [loader, setLoader] = useState(false);
   const auth = getAuth();
+  const navigate = useNavigate();
   const initialValues = {
     name: "",
     email: "",
@@ -49,6 +51,7 @@ const RegFormCompo = () => {
               progress: undefined,
               theme: "light",
             });
+            navigate("/login");
           })
           .catch((errors) => {
             console.log(errors.message);

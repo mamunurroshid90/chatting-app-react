@@ -17,3 +17,8 @@ export const signUp = Yup.object({
     "Password not matched"
   ),
 });
+
+export const login = Yup.object({
+  email: Yup.string().email().required("Enter your email"),
+  password: Yup.string().required("Please enter your password"),
+});
