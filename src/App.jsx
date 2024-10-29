@@ -5,20 +5,24 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./App.css";
-import LoginFormCompo from "./components/login/LoginComp";
-import RegFormCompo from "./components/registration/RegistrationComp";
 import "react-toastify/dist/ReactToastify.css";
 import Registration from "./pages/Registration";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import LoggedInUserRoutes from "./privateRoutes/LoggedInUserRoutes";
+import NotLoggedInUser from "./privateRoutes/NotLoggedInUser";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-        <Route path="/registration" element={<Registration />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
+        <Route element={<LoggedInUserRoutes />}>
+          <Route path="/" element={<Home />} />
+        </Route>
+        <Route element={<NotLoggedInUser />}>
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
       </Route>
     )
   );

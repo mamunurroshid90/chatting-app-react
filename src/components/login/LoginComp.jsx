@@ -4,11 +4,14 @@ import { login } from "../../validation/validation";
 import { BeatLoader } from "react-spinners";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loggedInUser } from "../../features/slices/loginSlice";
 
 function LoginFormCompo() {
   const [loader, setLoader] = useState(false);
   const auth = getAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const initialValues = {
     email: "",
@@ -18,15 +21,15 @@ function LoginFormCompo() {
   const formik = useFormik({
     initialValues,
     onSubmit: () => {
+      setLoader(true);
       console.log("login");
-      signInUsers();
+      singInUser();
     },
     validationSchema: login,
   });
-  console.log(formik);
+  // console.log(formik);
 
-  const signInUsers = () => {
-    setLoader(true);
+  const singInUser = () => {
     signInWithEmailAndPassword(
       auth,
       formik.values.email,
@@ -34,8 +37,9 @@ function LoginFormCompo() {
     )
       .then(({ user }) => {
         setLoader(false);
-        console.log("Sign in done", user);
-        if (user.emailVerified) {
+        if (user.emailVerified === true) {
+          dispatch(loggedInUser(user));
+          localStorage.setItem("user", JSON.stringify(user));
           navigate("/");
         } else {
           toast.error("Please verify your email", {
@@ -63,9 +67,9 @@ function LoginFormCompo() {
             progress: undefined,
             theme: "light",
           });
+          setLoader(false);
         }
       });
-    setLoader(false);
   };
 
   return (
@@ -119,7 +123,7 @@ function LoginFormCompo() {
               type="submit"
               className=" bg-[#313131] text-white py-2 text-lg rounded-md font-medium font-fontInter"
             >
-              {loader ? <BeatLoader /> : "Sign In"}
+              {loader ? <BeatLoader size={5} color="#ffffff" /> : "Sign In"}
             </button>
 
             <p className=" hover:underline font-fontInter text-[#4A4A4A]">
@@ -128,7 +132,7 @@ function LoginFormCompo() {
             <p className=" text-base font-fontInter text-[#000000]">
               Don't have an account please{" "}
               <span className=" text-[#236DB0] hover:underline cursor-pointer font-fontInter">
-                sign Up
+                <Link to="/registration">sign Up</Link>
               </span>
             </p>
           </form>

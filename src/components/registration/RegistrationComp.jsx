@@ -8,22 +8,23 @@ import {
 } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegFormCompo = () => {
   const [loader, setLoader] = useState(false);
   const auth = getAuth();
   const navigate = useNavigate();
+
   const initialValues = {
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   };
+
   const formik = useFormik({
     initialValues,
     onSubmit: () => {
-      console.log("submit");
       createNewUsers();
     },
     validationSchema: signUp,
@@ -37,7 +38,6 @@ const RegFormCompo = () => {
       formik.values.password
     )
       .then(() => {
-        console.log("Sign Up done");
         setLoader(false);
         sendEmailVerification(auth.currentUser)
           .then(() => {
@@ -51,14 +51,15 @@ const RegFormCompo = () => {
               progress: undefined,
               theme: "light",
             });
-            navigate("/login");
+            setTimeout(() => {
+              navigate("/login");
+            }, 2000);
           })
           .catch((errors) => {
             console.log(errors.message);
           });
       })
       .catch((errors) => {
-        console.log(errors.message);
         if (errors.message.includes("auth/email-already-in-use")) {
           toast.error("Email already uses", {
             position: "top-right",
@@ -74,7 +75,7 @@ const RegFormCompo = () => {
         setLoader(false);
       });
   };
-  // console.log(formik);
+
   return (
     <>
       <ToastContainer />
@@ -167,7 +168,7 @@ const RegFormCompo = () => {
             <p className=" text-base font-fontInter text-[#000000]">
               Already have an account please{" "}
               <span className=" text-[#236DB0] hover:underline cursor-pointer">
-                sign in
+                <Link to="/login">sign in</Link>
               </span>
             </p>
           </form>
