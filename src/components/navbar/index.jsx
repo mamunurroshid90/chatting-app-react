@@ -3,6 +3,7 @@ import { ProfileUploadIcon } from "../../../public/svg/ProfileUploadIcon";
 import { HomeIcon } from "../../../public/svg/HomeIcon";
 import { MessageIcon } from "../../../public/svg/MessageIcon";
 import { BackSquireIcon } from "../../../public/svg/BackSqureIcon";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
@@ -22,12 +23,12 @@ const Navbar = () => {
               </h2>
             </div>
             <div className=" flex flex-col gap-10">
-              <div>
+              <Link to="/">
                 <HomeIcon />
-              </div>
-              <div>
+              </Link>
+              <Link to="/message">
                 <MessageIcon />
-              </div>
+              </Link>
             </div>
             <div className=" flex gap-3">
               <BackSquireIcon />
