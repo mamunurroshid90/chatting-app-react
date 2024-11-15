@@ -1,11 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { ProfileUploadIcon } from "../../../public/svg/ProfileUploadIcon";
 import { HomeIcon } from "../../../public/svg/HomeIcon";
 import { MessageIcon } from "../../../public/svg/MessageIcon";
 import { BackSquireIcon } from "../../../public/svg/BackSqureIcon";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { loggedOutUser } from "../../features/slices/loginSlice";
+import { createPortal } from "react-dom";
+import Modals from "../modal";
 
 const Navbar = () => {
+  const [show, setShow] = useState(false);
+  const location = useLocation();
+  const auth = getAuth();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        navigate("/login");
+        localStorage.removeItem("user");
+        dispatch(loggedOutUser());
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
   return (
     <>
       <div className="">
@@ -14,7 +37,10 @@ const Navbar = () => {
             <div>
               <div className=" relative">
                 <img src="/images/profile.png" alt="profile-pic" />
-                <div className=" absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]">
+                <div
+                  // onClick={() => setShow(true)}
+                  className=" absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]"
+                >
                   <ProfileUploadIcon />
                 </div>
               </div>
@@ -23,14 +49,20 @@ const Navbar = () => {
               </h2>
             </div>
             <div className=" flex flex-col gap-10">
-              <Link to="/">
+              <Link
+                to="/"
+                className={`${location.pathname == "/" ? " text-cyan-400" : " text-white"}`}
+              >
                 <HomeIcon />
               </Link>
-              <Link to="/message">
+              <Link
+                to="/message"
+                className={`${location.pathname == "/message" ? " text-cyan-400" : " text-white"}`}
+              >
                 <MessageIcon />
               </Link>
             </div>
-            <div className=" flex gap-3">
+            <div onClick={handleLogout} className=" flex gap-3 cursor-pointer">
               <BackSquireIcon />
               <h2 className=" text-xl font-fontInter font-semibold text-white">
                 Log out
@@ -38,6 +70,13 @@ const Navbar = () => {
             </div>
           </div>
         </nav>
+        {show &&
+          createPortal(
+            <div>
+              <Modals />
+            </div>,
+            Document.body
+          )}
       </div>
     </>
   );

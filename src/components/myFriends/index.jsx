@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const MyFriends = () => {
+  const navigate = useNavigate();
   return (
     <>
       <div>
@@ -9,7 +11,10 @@ const MyFriends = () => {
         </h2>
         <div className=" flex flex-col gap-2">
           <div className=" flex items-center justify-between">
-            <div className=" flex items-center gap-3">
+            <div
+              onClick={() => navigate("/message")}
+              className=" flex items-center gap-3 cursor-pointer"
+            >
               <div className=" w-12 h-12 rounded-full">
                 <img
                   src="/public/images/profile.png"
