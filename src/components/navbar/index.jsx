@@ -11,7 +11,7 @@ import { createPortal } from "react-dom";
 import Modals from "../modal";
 
 const Navbar = () => {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const location = useLocation();
   const auth = getAuth();
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const Navbar = () => {
               <div className=" relative">
                 <img src="/images/profile.png" alt="profile-pic" />
                 <div
-                  // onClick={() => setShow(true)}
+                  onClick={() => setShow(true)}
                   className=" absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]"
                 >
                   <ProfileUploadIcon />
