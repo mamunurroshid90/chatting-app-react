@@ -8,13 +8,8 @@ const ImageCropper = ({
   cropperRef,
   setCropData,
   cropData,
+  getCropData,
 }) => {
-  const getCropData = () => {
-    if (typeof cropperRef.current?.cropper !== "undefined") {
-      setCropData(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
-    }
-  };
-
   return (
     <div>
       <div className=" fixed top-0 left-0 w-full h-screen flex justify-center items-center flex-col">
@@ -52,18 +47,12 @@ const ImageCropper = ({
               guides={true}
             />
           </div>
-          <div
-            className="box"
-            style={{ width: "50%", float: "right", height: "300px" }}
+          <button
+            onClick={getCropData}
+            className=" bg-cyan-500 py-2 font-fontInter font-semibold text-white w-full"
           >
-            <h1>
-              <span>Crop</span>
-              <button style={{ float: "right" }} onClick={getCropData}>
-                Crop Image
-              </button>
-            </h1>
-            <img style={{ width: "100%" }} src={cropData} alt="cropped" />
-          </div>
+            Upload
+          </button>
         </div>
       </div>
     </div>

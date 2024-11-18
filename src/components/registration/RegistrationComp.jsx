@@ -5,15 +5,18 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
 import { Link, useNavigate } from "react-router-dom";
+import { getDatabase, ref, set } from "firebase/database";
 
 const RegFormCompo = () => {
   const [loader, setLoader] = useState(false);
   const auth = getAuth();
   const navigate = useNavigate();
+  const db = getDatabase();
 
   const initialValues = {
     name: "",
@@ -37,23 +40,36 @@ const RegFormCompo = () => {
       formik.values.email,
       formik.values.password
     )
-      .then(() => {
+      .then(({ user }) => {
+        console.log(user);
         setLoader(false);
-        sendEmailVerification(auth.currentUser)
+        updateProfile(auth.currentUser, {
+          displayName: formik.values.name,
+        })
           .then(() => {
-            toast.success("Sign up done", {
-              position: "top-right",
-              autoClose: 2000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: false,
-              draggable: false,
-              progress: undefined,
-              theme: "light",
-            });
-            setTimeout(() => {
-              navigate("/login");
-            }, 2000);
+            sendEmailVerification(auth.currentUser)
+              .then(() => {
+                toast.success("Sign up done", {
+                  position: "top-right",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: false,
+                  pauseOnHover: false,
+                  draggable: false,
+                  progress: undefined,
+                  theme: "light",
+                });
+                setTimeout(() => {
+                  navigate("/login");
+                }, 2000);
+                setLoader(false);
+              })
+              .then(() => {
+                set(ref(db, "users/" + user.uid), {
+                  username: user.displayName,
+                  email: user.email,
+                });
+              });
           })
           .catch((errors) => {
             console.log(errors.message);
