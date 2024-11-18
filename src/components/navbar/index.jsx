@@ -22,14 +22,11 @@ const Navbar = () => {
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        // Sign-out successful.
         navigate("/login");
         localStorage.removeItem("user");
         dispatch(loggedOutUser());
       })
-      .catch((error) => {
-        // An error happened.
-      });
+      .catch((error) => {});
   };
   return (
     <>
