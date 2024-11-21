@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { AddUserIcon } from "../../../public/svg/AddUser";
-import { getDatabase, onValue, push, ref, set } from "firebase/database";
+import {
+  getDatabase,
+  onValue,
+  push,
+  ref,
+  remove,
+  set,
+} from "firebase/database";
 import { useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref as Ref } from "firebase/storage";
 import avatar2 from "../../../public/images/avatar2.png";
@@ -65,28 +72,30 @@ const AllUsers = () => {
     const starCountRef = ref(db, "friendRequest/");
     onValue(starCountRef, (snapshot) => {
       let reqArr = [];
-      snapshot.forEach((friendReq) => {
-        reqArr.push(friendReq.val().receiverId + friendReq.val().senderId);
+      let cancelArr = [];
+      snapshot.forEach((item) => {
+        reqArr.push(item.val().receiverId + item.val().senderId);
+        cancelArr.push({ ...item.val(), id: item.key });
       });
       setFriendReqList(reqArr);
-    });
-  }, [db]);
-
-  console.log(friendReqList);
-
-  // cancel friend request
-  useEffect(() => {
-    const starCountRef = ref(db, "friendRequest/");
-    onValue(starCountRef, (snapshot) => {
-      let cancelArr = [];
-      snapshot.forEach((friendReq) => {
-        cancelArr.push({ ...friendReq.val(), id: friendReq.key });
-      });
       setCancelRequest(cancelArr);
     });
   }, [db]);
 
   console.log(cancelRequest);
+
+  // console.log(friendReqList);
+
+  const handleCancelReq = (itemId) => {
+    console.log(itemId);
+    const reqToCancel = cancelRequest.find(
+      (req) => req.receiverId === itemId && req.senderId === user.uid
+    );
+    if (reqToCancel) {
+      remove(ref(db, "friendRequest/" + reqToCancel.id));
+    }
+    console.log(reqToCancel);
+  };
 
   return (
     <>
@@ -99,8 +108,8 @@ const AllUsers = () => {
         />
 
         <div className=" flex flex-col gap-2">
-          {users.map((item) => (
-            <div className=" flex justify-between items-center">
+          {users.map((item, i) => (
+            <div key={i} className=" flex justify-between items-center">
               <div className=" flex items-center gap-3">
                 <div className=" w-12 h-12 rounded-full">
                   <img
@@ -115,7 +124,12 @@ const AllUsers = () => {
               </div>
               {friendReqList.includes(item.id + user.uid) ||
               friendReqList.includes(user.uid + item.id) ? (
-                <button>Cancel Request</button>
+                <button
+                  onClick={() => handleCancelReq(item.id)}
+                  className=" bg-red-400 py-1 px-3 rounded-md text-white"
+                >
+                  Cancel Request
+                </button>
               ) : (
                 <div onClick={() => handleFriendRequest(item)}>
                   <AddUserIcon />
