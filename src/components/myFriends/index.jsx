@@ -32,25 +32,29 @@ const MyFriends = () => {
         <h2 className=" text-2xl font-fontInter font-semibold mb-6">
           My Friend
         </h2>
-        {friends?.map((item) => (
-          <div className=" flex flex-col gap-2" key={item.id}>
-            <div className=" flex items-center justify-between">
+        <div className=" flex flex-col gap-3">
+          {friends?.map((item) => (
+            <div className=" flex items-center justify-between" key={item.id}>
               <div
                 onClick={() => navigate("/message")}
                 className=" flex items-center gap-3 cursor-pointer"
               >
                 {user.uid === item.receiverId ? (
-                  <img
-                    src={item.senderProfilePic || avatar2}
-                    alt="users-profile"
-                    className=" w-full h-full object-cover rounded-full bg-slate-200"
-                  />
+                  <div className=" w-8 h-8 rounded-full">
+                    <img
+                      src={item.senderProfilePic || avatar2}
+                      alt="users-profile"
+                      className=" w-full h-full object-cover rounded-full bg-slate-200"
+                    />
+                  </div>
                 ) : (
-                  <img
-                    src={item.receiverProfilePic || avatar2}
-                    alt="users-profile"
-                    className=" w-full h-full object-cover rounded-full bg-slate-200"
-                  />
+                  <div className=" w-8 h-8 rounded-full">
+                    <img
+                      src={item.receiverProfilePic || avatar2}
+                      alt="users-profile"
+                      className=" w-full h-full object-cover rounded-full bg-slate-200"
+                    />
+                  </div>
                 )}
                 <h3 className=" text-lg font-fontInter font-medium">
                   {user.uid === item.senderId
@@ -67,8 +71,8 @@ const MyFriends = () => {
                 </button>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </>
   );

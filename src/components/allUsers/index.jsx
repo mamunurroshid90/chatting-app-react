@@ -51,8 +51,6 @@ const AllUsers = () => {
     });
   }, [db, user.uid, storage]);
 
-  // console.log(users);
-
   // sent friend request
 
   const handleFriendRequest = (data) => {
@@ -122,13 +120,16 @@ const AllUsers = () => {
                   {item.username}
                 </h3>
               </div>
-              {friendReqList.includes(item.id + user.uid) ||
-              friendReqList.includes(user.uid + item.id) ? (
+              {friendReqList.includes(item.id + user.uid) ? (
                 <button
                   onClick={() => handleCancelReq(item.id)}
                   className=" bg-red-400 py-1 px-3 rounded-md text-white"
                 >
                   Cancel Request
+                </button>
+              ) : friendReqList.includes(user.uid + item.id) ? (
+                <button className=" bg-yellow-600 py-1 px-3 rounded-md text-white">
+                  Pending
                 </button>
               ) : (
                 <div onClick={() => handleFriendRequest(item)}>
