@@ -28,25 +28,13 @@ const AllUsers = () => {
 
       snapshot.forEach((allUsers) => {
         if (user.uid !== allUsers.key) {
-          getDownloadURL(Ref(storage, allUsers.key))
-            .then((downloadURL) => {
-              users.push({
-                ...allUsers.val(),
-                id: allUsers.key,
-                photoURL: downloadURL,
-              });
-            })
-            .catch((error) => {
-              users.push({
-                ...allUsers.val(),
-                id: allUsers.key,
-                photoURL: null,
-              });
-            })
-            .then(() => {
-              setUsers([...users]);
-            });
+          users.push({
+            ...allUsers.val(),
+            id: allUsers.key,
+            // photoURL: downloadURL,
+          });
         }
+        setUsers([...users]);
       });
     });
   }, [db, user.uid, storage]);
@@ -80,7 +68,7 @@ const AllUsers = () => {
     });
   }, [db]);
 
-  console.log(cancelRequest);
+  // console.log(cancelRequest);
 
   // console.log(friendReqList);
 
@@ -92,7 +80,7 @@ const AllUsers = () => {
     if (reqToCancel) {
       remove(ref(db, "friendRequest/" + reqToCancel.id));
     }
-    console.log(reqToCancel);
+    // console.log(reqToCancel);
   };
 
   return (

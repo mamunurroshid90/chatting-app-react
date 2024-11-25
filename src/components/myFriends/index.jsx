@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDatabase, ref, onValue } from "firebase/database";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import avatar2 from "../../../public/images/avatar2.png";
+import { activeSingle } from "../../features/slices/ActiveSingleSlice";
 
 const MyFriends = () => {
   const [friends, setFriends] = useState([]);
   const user = useSelector((user) => user.login.loggedIn);
   const navigate = useNavigate();
   const db = getDatabase();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const starCountRef = ref(db, "friends/");
@@ -26,6 +28,49 @@ const MyFriends = () => {
     });
   }, [db, user.uid]);
 
+  const handleSingleChat = (data) => {
+    console.log(data.receiverId);
+    console.log(user.uid);
+    if (user.uid === data.receiverId) {
+      dispatch(
+        activeSingle({
+          status: "single",
+          id: data.senderId,
+          name: data.senderName,
+          profile: data.senderProfilePic,
+        })
+      );
+      localStorage.setItem(
+        "active",
+        JSON.stringify({
+          status: "single",
+          id: data.senderId,
+          name: data.senderName,
+          profile: data.senderProfilePic,
+        })
+      );
+    } else {
+      console.log("else");
+      dispatch(
+        activeSingle({
+          status: "single",
+          id: data.receiverId,
+          name: data.receiverName,
+          profile: data.receiverProfilePic,
+        })
+      );
+      localStorage.setItem(
+        "active",
+        JSON.stringify({
+          status: "single",
+          id: data.receiverId,
+          name: data.receiverName,
+          profile: data.receiverProfilePic,
+        })
+      );
+    }
+  };
+
   return (
     <>
       <div>
@@ -34,7 +79,11 @@ const MyFriends = () => {
         </h2>
         <div className=" flex flex-col gap-3">
           {friends?.map((item) => (
-            <div className=" flex items-center justify-between" key={item.id}>
+            <div
+              onClick={() => handleSingleChat(item)}
+              className=" flex items-center justify-between hover:bg-[#efefef] px-3 py-2 rounded-md transition-all ease-linear duration-200"
+              key={item.id}
+            >
               <div
                 onClick={() => navigate("/message")}
                 className=" flex items-center gap-3 cursor-pointer"
