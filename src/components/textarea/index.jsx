@@ -14,11 +14,12 @@ const TextBox = () => {
   const singleFriend = useSelector((single) => single.active.active);
   const db = getDatabase();
   const scrollRef = useRef();
+  const chooseRef = useRef();
 
   // console.log(message);
   let timeFormate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}:${new Date().getMinutes()}`;
 
-  const handleSendButton = () => {
+  const handleSendMessage = () => {
     if (singleFriend?.status === "single") {
       set(push(ref(db, "singleMessage")), {
         whoSenderName: user.displayName,
@@ -62,6 +63,12 @@ const TextBox = () => {
       behavior: "smooth",
     });
   }, [message]);
+
+  const handleSendButton = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
 
   return (
     <>
@@ -120,7 +127,10 @@ const TextBox = () => {
                 </div>
               )}
             </div>
-            <GalleryIcon />
+            <div className="" onClick={() => chooseRef.current.click()}>
+              <GalleryIcon />
+            </div>
+            <input type="file" ref={chooseRef} hidden />
           </div>
           <div className=" w-full mx-5">
             <input
@@ -129,11 +139,12 @@ const TextBox = () => {
               type="text"
               placeholder="Type here"
               className=" w-full p-2"
+              onKeyUp={handleSendButton}
             />
           </div>
           <div>
             <button
-              onClick={handleSendButton}
+              onClick={handleSendMessage}
               className=" bg-[#3E8DEB] py-2 px-6 rounded text-white"
             >
               Send
