@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MicrophoneIcon } from "../../../public/svg/MicrophoneIcon";
 import { SmileIcon } from "../../../public/svg/SmileIcon";
 import { GalleryIcon } from "../../../public/svg/GalleryIcon";
 import { useSelector } from "react-redux";
 import { getDatabase, onValue, push, ref, set } from "firebase/database";
-import { formatDistance } from "date-fns";
+import EmojiPicker from "emoji-picker-react";
 
 const TextBox = () => {
   const [message, setMessage] = useState("");
   const [allMessage, setAllMessage] = useState([]);
+  const [emojiShow, setEmojiShow] = useState(false);
   const user = useSelector((user) => user.login.loggedIn);
   const singleFriend = useSelector((single) => single.active.active);
   const db = getDatabase();
+  const scrollRef = useRef();
 
   // console.log(message);
   let timeFormate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}:${new Date().getMinutes()}`;
@@ -49,6 +51,18 @@ const TextBox = () => {
   }, [singleFriend.id]);
 
   // console.log(allMessage);
+
+  const handleEmojiPicker = ({ emoji }) => {
+    setMessage(message + emoji);
+    setEmojiShow(false);
+  };
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [message]);
+
   return (
     <>
       <div className="">
@@ -64,14 +78,16 @@ const TextBox = () => {
           <div className=" h-full w-full">
             {singleFriend?.status === "single"
               ? allMessage?.map((item, i) => (
-                  <div key={i}>
+                  <div key={i} ref={scrollRef}>
                     {item.whoSenderId === user.uid ? (
                       <div className=" ml-auto w-[60%] flex justify-end">
                         <div className=" flex flex-col gap-1">
                           <p className=" bg-black text-white p-3 rounded inline-block my-1">
                             {item.message}
                           </p>
-                          <span>{item.date}</span>;
+                          <span className=" text-[10px] font-fontInter text-gray-700">
+                            {item.date}
+                          </span>
                         </div>
                       </div>
                     ) : (
@@ -80,7 +96,9 @@ const TextBox = () => {
                           <p className=" bg-blue-700 text-white p-3 rounded inline-block my-1">
                             {item.message}
                           </p>
-                          <span>{item.date}</span>
+                          <span className=" text-[10px] font-fontInter text-gray-700">
+                            {item.date}
+                          </span>
                         </div>
                       </div>
                     )}
@@ -92,7 +110,16 @@ const TextBox = () => {
         <div className=" flex justify-between items-center bg-[#f5f5f5] py-3 pl-3 pr-2 mt-2">
           <div className=" flex gap-3">
             <MicrophoneIcon />
-            <SmileIcon />
+            <div className=" relative cursor-pointer">
+              <div onClick={() => setEmojiShow((prev) => !prev)}>
+                <SmileIcon />
+              </div>
+              {emojiShow && (
+                <div className=" absolute bottom-12 left-0">
+                  <EmojiPicker onEmojiClick={handleEmojiPicker} />
+                </div>
+              )}
+            </div>
             <GalleryIcon />
           </div>
           <div className=" w-full mx-5">
